@@ -1,0 +1,48 @@
+{
+  "manifest_version": 2,
+  "name": "Omni WhatsApp Lord V4 Pro",
+  "short_name": "WA Lord V4",
+  "version": "4.2.0",
+  "description": "200000x WhatsApp Web voice/video-call microphone maximizer for Android Quetta-style extension browsers, with page-context WebRTC hooks, live DSP controls, and a polished control panel.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "https://web.whatsapp.com/*",
+    "https://*.web.whatsapp.com/*",
+    "https://whatsapp.com/*",
+    "https://*.whatsapp.com/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*",
+        "https://*.web.whatsapp.com/*",
+        "https://whatsapp.com/*",
+        "https://*.whatsapp.com/*"
+      ],
+      "js": ["content/loader.js", "content/service.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "web_accessible_resources": ["core/injector.js"],
+  "browser_action": {
+    "default_title": "Omni WhatsApp Lord V4 Pro",
+    "default_popup": "popup/popup.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "omni-whatsapp-lord@example.com",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  }
+}

@@ -41,12 +41,7 @@
 
   inject();
 
-  const observer = new MutationObserver(() => {
+  window.addEventListener('pageshow', () => {
     if (!window.__micMaxInjectorReady) inject();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-
-  setInterval(() => {
-    if (!window.__micMaxInjectorReady) inject();
-  }, 2500);
+  }, { passive: true });
 })();

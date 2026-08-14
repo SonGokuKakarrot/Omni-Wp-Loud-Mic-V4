@@ -4,32 +4,32 @@
 
   const HAS_PROMISE_API = typeof globalThis.browser !== 'undefined' && EXT === globalThis.browser;
   const DEFAULTS = {
-    profileVersion: 5,
+    profileVersion: 6,
     enabled: true,
-    gainDb: 106.0206,
-    thresholdDb: -60,
+    gainDb: 18,
+    thresholdDb: -36,
     knee: 40,
-    ratio: 20,
+    ratio: 8,
     attack: 0.0001,
     release: 0.03,
-    lowShelfDb: 14,
-    presenceDb: 20,
-    highShelfDb: 16,
+    lowShelfDb: 3,
+    presenceDb: 6,
+    highShelfDb: 5,
     limiterDb: -0.1,
-    drive: 1.2,
-    loudness: 1.0,
-    maxBoost: 200000,
+    drive: 0.2,
+    loudness: 2,
+    maxBoost: 16,
     sustain: true,
-    sustainTargetDb: 5,
-    sustainMaxGain: 120,
+    sustainTargetDb: -8,
+    sustainMaxGain: 8,
     forceRawMic: true,
-    reverbEnabled: true,
+    reverbEnabled: false,
     reverbDelay: 0.045,
     reverbFeedback: 0.35,
-    reverbWet: 0.18,
-    keepAlive: true,
-    keepAliveGain: 0.00035,
-    senderRefreshMs: 500
+    reverbWet: 0.03,
+    keepAlive: false,
+    keepAliveGain: 0,
+    senderRefreshMs: 1000
   };
   const MSG_CFG = 'MIC_MAXIMIZER_CONFIG';
   let hookReady = false;
@@ -97,7 +97,6 @@
     }
   });
 
-  setInterval(sync, 3500);
-  setInterval(heartbeat, 5000);
+  setInterval(heartbeat, 15000);
   sync();
 })();

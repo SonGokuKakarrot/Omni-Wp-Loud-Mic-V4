@@ -33,36 +33,36 @@
         </button>
         <button id="lordPreset" class="preset lord" type="button" aria-pressed="false">
           <strong>Lord V4 Pro</strong>
-          <small>200000x extreme dominance</small>
+          <small>PC-safe call boost</small>
         </button>
       </div>
-      <p class="hint">For maximum loudness, raise Loudness Trim, Boost ceiling, Sustain Max Gain, Ratio, Presence, Treble, and Gain. If WhatsApp Web crackles or clips, lower Saturation or Limiter Ceiling.</p>
+      <p class="hint">PC-safe defaults reduce CPU load and clipping. Increase Gain or Loudness gradually; if calls crackle, lower Saturation or Presence.</p>
     </section>
 
     <section class="controls" aria-label="Mic boost controls">
-      <div class="field"><label for="gainDb">Gain <em>dB / multiplier</em></label><input id="gainDb" type="range" min="0" max="120" step="0.0001" value="106.0206" /><output id="gainDbVal"></output></div>
-      <div class="field"><label for="loudness">Loudness Trim</label><input id="loudness" type="range" min="0.5" max="200000" step="0.1" value="1" /><output id="loudnessVal"></output></div>
-      <div class="field"><label for="maxBoost">Boost ceiling</label><input id="maxBoost" type="range" min="1" max="200000" step="1" value="200000" /><output id="maxBoostVal"></output></div>
-      <div class="field"><label for="sustainMaxGain">Sustain Max Gain</label><input id="sustainMaxGain" type="range" min="1" max="120" step="0.1" value="120" /><output id="sustainMaxGainVal"></output></div>
-      <div class="field"><label for="sustainTargetDb">Sustain Target <em>dB</em></label><input id="sustainTargetDb" type="range" min="-40" max="20" step="0.1" value="5" /><output id="sustainTargetDbVal"></output></div>
-      <div class="field"><label for="drive">Saturation Drive</label><input id="drive" type="range" min="0" max="10" step="0.01" value="1.2" /><output id="driveVal"></output></div>
-      <div class="field"><label for="thresholdDb">Compressor Threshold <em>dB</em></label><input id="thresholdDb" type="range" min="-100" max="0" value="-60" /><output id="thresholdDbVal"></output></div>
-      <div class="field"><label for="ratio">Compressor Ratio</label><input id="ratio" type="range" min="1" max="20" step="0.5" value="20" /><output id="ratioVal"></output></div>
+      <div class="field"><label for="gainDb">Gain <em>dB / multiplier</em></label><input id="gainDb" type="range" min="0" max="42" step="0.1" value="18" /><output id="gainDbVal"></output></div>
+      <div class="field"><label for="loudness">Loudness Trim</label><input id="loudness" type="range" min="0.5" max="16" step="0.1" value="2" /><output id="loudnessVal"></output></div>
+      <div class="field"><label for="maxBoost">Boost ceiling</label><input id="maxBoost" type="range" min="1" max="16" step="0.5" value="16" /><output id="maxBoostVal"></output></div>
+      <div class="field"><label for="sustainMaxGain">Sustain Max Gain</label><input id="sustainMaxGain" type="range" min="1" max="16" step="0.1" value="8" /><output id="sustainMaxGainVal"></output></div>
+      <div class="field"><label for="sustainTargetDb">Sustain Target <em>dB</em></label><input id="sustainTargetDb" type="range" min="-40" max="12" step="0.1" value="-8" /><output id="sustainTargetDbVal"></output></div>
+      <div class="field"><label for="drive">Saturation Drive</label><input id="drive" type="range" min="0" max="3" step="0.01" value="0.2" /><output id="driveVal"></output></div>
+      <div class="field"><label for="thresholdDb">Compressor Threshold <em>dB</em></label><input id="thresholdDb" type="range" min="-100" max="0" value="-36" /><output id="thresholdDbVal"></output></div>
+      <div class="field"><label for="ratio">Compressor Ratio</label><input id="ratio" type="range" min="1" max="20" step="0.5" value="8" /><output id="ratioVal"></output></div>
       <div class="field"><label for="limiterDb">Limiter Ceiling <em>dB</em></label><input id="limiterDb" type="range" min="-24" max="0" step="0.1" value="-0.1" /><output id="limiterDbVal"></output></div>
-      <div class="field"><label for="presenceDb">Presence EQ <em>dB</em></label><input id="presenceDb" type="range" min="-60" max="60" value="20" /><output id="presenceDbVal"></output></div>
-      <div class="field"><label for="lowShelfDb">Bass EQ <em>dB</em></label><input id="lowShelfDb" type="range" min="-60" max="60" value="14" /><output id="lowShelfDbVal"></output></div>
-      <div class="field"><label for="highShelfDb">Treble EQ <em>dB</em></label><input id="highShelfDb" type="range" min="-60" max="60" value="16" /><output id="highShelfDbVal"></output></div>
+      <div class="field"><label for="presenceDb">Presence EQ <em>dB</em></label><input id="presenceDb" type="range" min="-60" max="60" value="6" /><output id="presenceDbVal"></output></div>
+      <div class="field"><label for="lowShelfDb">Bass EQ <em>dB</em></label><input id="lowShelfDb" type="range" min="-60" max="60" value="3" /><output id="lowShelfDbVal"></output></div>
+      <div class="field"><label for="highShelfDb">Treble EQ <em>dB</em></label><input id="highShelfDb" type="range" min="-60" max="60" value="5" /><output id="highShelfDbVal"></output></div>
       <div class="field"><label for="reverbDelay">Reverb Delay</label><input id="reverbDelay" type="range" min="0.01" max="0.25" step="0.001" value="0.045" /><output id="reverbDelayVal"></output></div>
       <div class="field"><label for="reverbFeedback">Reverb Feedback</label><input id="reverbFeedback" type="range" min="0" max="0.85" step="0.01" value="0.35" /><output id="reverbFeedbackVal"></output></div>
-      <div class="field"><label for="reverbWet">Reverb Wet</label><input id="reverbWet" type="range" min="0" max="0.8" step="0.01" value="0.18" /><output id="reverbWetVal"></output></div>
-      <div class="field"><label for="keepAliveGain">Keep-alive Gain</label><input id="keepAliveGain" type="range" min="0" max="0.01" step="0.00001" value="0.00035" /><output id="keepAliveGainVal"></output></div>
+      <div class="field"><label for="reverbWet">Reverb Wet</label><input id="reverbWet" type="range" min="0" max="0.8" step="0.01" value="0.03" /><output id="reverbWetVal"></output></div>
+      <div class="field"><label for="keepAliveGain">Keep-alive Gain</label><input id="keepAliveGain" type="range" min="0" max="0.01" step="0.00001" value="0" /><output id="keepAliveGainVal"></output></div>
       <label class="check"><input id="sustain" type="checkbox" /> Anti-duck sustain lock</label>
       <label class="check"><input id="forceRawMic" type="checkbox" /> Raw mic constraint lock</label>
       <label class="check"><input id="reverbEnabled" type="checkbox" /> Reverb thickener</label>
       <label class="check"><input id="keepAlive" type="checkbox" /> Keep-alive carrier</label>
     </section>
 
-    <footer>Quetta/Android note: install as an unpacked/signed extension, open WhatsApp Web, then reload the tab before joining a call.</footer>
+    <footer>PC Chromium note: load the folder at chrome://extensions, open WhatsApp Web, then reload before joining a voice or video call.</footer>
   </main>
   <script src="popup.js"></script>
 </body>

@@ -2,35 +2,34 @@
   if (window.__micMaxInjectorReady) return;
   window.__micMaxInjectorReady = true;
 
-  // Extreme profile based on Omni DC Lord, with clamps to keep controls recoverable.
-  // Omni WhatsApp Lord V4 extreme 200000x profile, with clamps to keep controls recoverable.
+  // PC-safe profile with conservative defaults to keep Chromium calls stable.
   const DEFAULTS = {
-    profileVersion: 5,
+    profileVersion: 6,
     enabled: true,
-    gainDb: 106.0206,
-    thresholdDb: -60,
+    gainDb: 18,
+    thresholdDb: -36,
     knee: 40,
-    ratio: 20,
+    ratio: 8,
     attack: 0.0001,
     release: 0.03,
-    lowShelfDb: 14,
-    presenceDb: 20,
-    highShelfDb: 16,
+    lowShelfDb: 3,
+    presenceDb: 6,
+    highShelfDb: 5,
     limiterDb: -0.1,
-    drive: 1.2,
-    loudness: 1.0,
-    maxBoost: 200000,
+    drive: 0.2,
+    loudness: 2,
+    maxBoost: 16,
     sustain: true,
-    sustainTargetDb: 5,
-    sustainMaxGain: 120,
+    sustainTargetDb: -8,
+    sustainMaxGain: 8,
     forceRawMic: true,
-    reverbEnabled: true,
+    reverbEnabled: false,
     reverbDelay: 0.045,
     reverbFeedback: 0.35,
-    reverbWet: 0.18,
-    keepAlive: true,
-    keepAliveGain: 0.00035,
-    senderRefreshMs: 500
+    reverbWet: 0.03,
+    keepAlive: false,
+    keepAliveGain: 0,
+    senderRefreshMs: 1000
   };
   const MSG_CFG = 'MIC_MAXIMIZER_CONFIG';
   const AUDIO_SEND_MAX_BITRATE = 512000;
@@ -48,6 +47,7 @@
     senderBySender: new WeakMap(),
     refreshingSenders: new WeakSet(),
     recoverTimers: new Set(),
+    recoveryPassQueued: false,
     lastAudioConstraints: { audio: true },
     sourceTracks: new Set(),
     origApplyConstraints: null
@@ -58,10 +58,10 @@
   function cfg(input = state.config) {
     const merged = { ...DEFAULTS, ...(input || {}) };
     merged.enabled = Boolean(merged.enabled);
-    merged.maxBoost = clamp(merged.maxBoost, 1, 200000);
+    merged.maxBoost = clamp(merged.maxBoost, 1, 16);
     merged.loudness = clamp(merged.loudness, 0.5, merged.maxBoost);
-    merged.gainDb = clamp(merged.gainDb, 0, 120);
-    merged.drive = clamp(merged.drive, 0, 10);
+    merged.gainDb = clamp(merged.gainDb, 0, 42);
+    merged.drive = clamp(merged.drive, 0, 3);
     merged.thresholdDb = clamp(merged.thresholdDb, -100, 0);
     merged.knee = clamp(merged.knee, 0, 40);
     // DynamicsCompressorNode.ratio has a nominal browser range of [1, 20].
@@ -74,8 +74,8 @@
     merged.highShelfDb = clamp(merged.highShelfDb, -60, 60);
     merged.limiterDb = clamp(merged.limiterDb, -24, 0);
     merged.sustain = Boolean(merged.sustain);
-    merged.sustainTargetDb = clamp(merged.sustainTargetDb, -40, 20);
-    merged.sustainMaxGain = clamp(merged.sustainMaxGain, 1, 120);
+    merged.sustainTargetDb = clamp(merged.sustainTargetDb, -40, 12);
+    merged.sustainMaxGain = clamp(merged.sustainMaxGain, 1, 16);
     merged.forceRawMic = Boolean(merged.forceRawMic);
     merged.reverbEnabled = Boolean(merged.reverbEnabled);
     merged.reverbDelay = clamp(merged.reverbDelay, 0.01, 0.25);
@@ -87,14 +87,19 @@
     return merged;
   }
 
+  const saturationCurveCache = new Map();
+
   function makeSaturationCurve(amount = 0.5) {
-    const k = Math.max(0.0001, amount * 100);
-    const n = 4096;
+    const cacheKey = Math.round(clamp(amount, 0, 10) * 100);
+    if (saturationCurveCache.has(cacheKey)) return saturationCurveCache.get(cacheKey);
+    const k = Math.max(0.0001, (cacheKey / 100) * 100);
+    const n = 1024;
     const curve = new Float32Array(n);
     for (let i = 0; i < n; i += 1) {
       const x = (i * 2) / n - 1;
       curve[i] = ((Math.PI + k) * x) / (Math.PI + k * Math.abs(x));
     }
+    saturationCurveCache.set(cacheKey, curve);
     return curve;
   }
 
@@ -478,11 +483,12 @@
   }
 
   function scheduleRecoveryPasses() {
-    for (const timer of state.recoverTimers) clearTimeout(timer);
-    state.recoverTimers.clear();
-    [0, 150, 500, 1200, 2500].forEach((delay) => {
+    if (state.recoveryPassQueued) return;
+    state.recoveryPassQueued = true;
+    [0, 300, 1200].forEach((delay) => {
       const timer = setTimeout(() => {
         state.recoverTimers.delete(timer);
+        if (delay === 1200) state.recoveryPassQueued = false;
         resumeAllPipelines();
         reconcileLiveSenders();
       }, delay);
@@ -648,6 +654,6 @@
     if (!document.hidden) scheduleRecoveryPasses();
   });
 
-  setInterval(reconcileLiveSenders, 2000);
+  setInterval(reconcileLiveSenders, 8000);
   window.postMessage({ type: 'MIC_MAXIMIZER_READY' }, '*');
 })();

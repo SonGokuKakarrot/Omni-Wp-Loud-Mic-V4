@@ -46,6 +46,10 @@ const PRESETS = {
   lord: { ...DEFAULTS }
 };
 const ids = Object.keys(DEFAULTS).filter((id) => id !== 'profileVersion' && id !== 'senderRefreshMs');
+const STORAGE_DEBOUNCE_MS = 120;
+let pendingConfig = null;
+let pendingSaveTimer = 0;
+
 
 function storageGet(key) {
   if (HAS_PROMISE_API) return EXT.storage.local.get(key);
@@ -141,16 +145,42 @@ async function readConfig() {
   return { ...DEFAULTS, ...config };
 }
 
-async function saveConfig(config) {
+async function persistConfig(config) {
   const merged = { ...DEFAULTS, ...config, profileVersion: DEFAULTS.profileVersion };
+  pendingConfig = merged;
   await storageSet({ micMaximizerConfig: merged });
-  applyToControls(merged);
+  if (pendingConfig === merged) pendingConfig = null;
+  return merged;
 }
 
-async function onControlInput(id, el) {
-  const merged = await readConfig();
+async function saveConfig(config, { render = true } = {}) {
+  clearTimeout(pendingSaveTimer);
+  pendingSaveTimer = 0;
+  const merged = await persistConfig(config);
+  if (render) applyToControls(merged);
+  return merged;
+}
+
+function queueSave(config) {
+  clearTimeout(pendingSaveTimer);
+  pendingConfig = { ...DEFAULTS, ...config, profileVersion: DEFAULTS.profileVersion };
+  pendingSaveTimer = setTimeout(() => {
+    pendingSaveTimer = 0;
+    persistConfig(pendingConfig).catch(() => {});
+  }, STORAGE_DEBOUNCE_MS);
+}
+
+async function currentConfig() {
+  return pendingConfig ? { ...DEFAULTS, ...pendingConfig } : readConfig();
+}
+
+async function onControlInput(id, el, immediate = false) {
+  const merged = await currentConfig();
   merged[id] = el.type === 'checkbox' ? el.checked : Number(el.value);
-  await saveConfig(merged);
+  updateLabels();
+  updatePresetState(merged);
+  if (immediate) await saveConfig(merged, { render: false });
+  else queueSave(merged);
 }
 
 async function init() {
@@ -160,7 +190,7 @@ async function init() {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', () => onControlInput(id, el));
-    el.addEventListener('change', () => onControlInput(id, el));
+    el.addEventListener('change', () => onControlInput(id, el, true));
   });
   document.getElementById('royalPreset')?.addEventListener('click', () => saveConfig(PRESETS.royal));
   document.getElementById('lordPreset')?.addEventListener('click', () => saveConfig(PRESETS.lord));
